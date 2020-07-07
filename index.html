@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marko+One&display=swap"
+      rel="stylesheet"
+    />
     <title>Document</title>
     <style>
       html,
@@ -11,9 +15,8 @@
         height: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         background-color: mediumaquamarine;
-        overflow: hidden;
       }
 
       #game {
@@ -21,6 +24,27 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-evenly;
+        overflow-x: hidden;
+        margin-right: auto;
+      }
+
+      #score {
+        height: 100vmin;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 2rem auto 0 0;
+        font-size: 3rem;
+        font-family: "Marko One", serif;
+        position: relative;
+      }
+
+      #scoreText {
+        position: absolute;
+        font-size: 7.5rem;
+        top: calc(50% - 7.5rem);
+        text-shadow: 5px 5px 2px #fff;
       }
 
       .card {
@@ -28,7 +52,7 @@
         height: 180px;
         position: relative;
         transform-style: preserve-3d;
-        /* transform: rotateY(180deg); */
+        transform: rotateY(180deg);
         transition: transform 0.5s;
         float: left;
       }
@@ -71,6 +95,10 @@
 
   <body>
     <div id="game"></div>
+    <div id="score">
+      Score:
+      <span id="scoreText">0</span>
+    </div>
 
     <script src="./js/jquery-3.5.0.min.js"></script>
     <script src="./js/sweetalert2.min.js"></script>
@@ -84,8 +112,8 @@
           }
         };
 
-        let game = false;
-        let input = "";
+        let game = true;
+        let score = 0;
 
         // 放40 張牌
         for (let i = 0; i < 40; i++) {
@@ -157,6 +185,9 @@
         $(".card").eq(38).addClass("plus2");
         $(".card").eq(39).addClass("plus4");
 
+        // 洗牌
+        // shuffle();
+
         // 開始翻牌
         $(`.card`).on(`click`, function () {
           if ($(`.open`).length < 2 && !$(this).hasClass(`open`)) {
@@ -167,38 +198,97 @@
           if ($(`.open`).length == 2) {
             setTimeout(function () {
               $(`.open`).removeClass(`open`);
-
-              // 跳sweetalert 給user 填答案
-              // Swal.fire({
-              //   title: "A x B = ",
-              //   input: "text",
-              //   inputValue: input,
-              //   showCancelButton: false,
-              //   inputValidator: (value) => {
-              //     if (!value) {
-              //       return "請輸入答案喔!";
-              //     } else {
-              //       input = value;
-              //       console.log(input);
-              //     }
-              //   },
-              // });
-              shuffle();
             }, 1000);
+          }
 
-            // 若兩張牌一樣
-            for (let i = 0; i < 9; i++) {
-              if (
-                $(`.open`)
-                  .eq(0)
-                  .hasClass(i + 1) ===
-                $(`.open`)
-                  .eq(1)
-                  .hasClass(i + 1)
-              ) {
-                $(`.open`).fadeTo(1000, 0).addClass(`ok`);
-              }
+          // 若兩張牌一樣
+          for (let i = 1; i <= 9; i++) {
+            if ($(".open").eq(0).hasClass(i) && $(".open").eq(1).hasClass(i)) {
+              setTimeout(function () {
+                $(".open").fadeTo(1000, 0).addClass(`ok`);
+                score += 5;
+                $("#scoreText").html(score);
+              }, 750);
             }
+          }
+
+          // 翻到效果牌
+          if ($(this).hasClass("block")) {
+            Swal.fire({
+              icon: "error",
+              title: "GG",
+              text: "你的分數被歸零了！",
+              timer: "3000",
+              timerProgressBar: true,
+            });
+            score = 0;
+            $("#scoreText").html(score);
+            setTimeout(function () {
+              $(".open").fadeTo(1000, 0).addClass(`ok`);
+              $(`.open`).removeClass(`open`);
+            }, 1000);
+          }
+
+          if ($(this).hasClass("switch")) {
+            Swal.fire({
+              icon: "warning",
+              title: "QQ",
+              text: "你的分數被開根號了！",
+              timer: "3000",
+              timerProgressBar: true,
+            });
+            score = Math.round(Math.sqrt(score));
+            $("#scoreText").html(score);
+            setTimeout(function () {
+              $(".open").fadeTo(1000, 0).addClass(`ok`);
+              $(`.open`).removeClass(`open`);
+            }, 1000);
+          }
+
+          if ($(this).hasClass("plus2")) {
+            Swal.fire({
+              icon: "info",
+              title: "喔耶",
+              text: "你的分數 double 了！",
+              timer: "3000",
+              timerProgressBar: true,
+            });
+            score = score * 2;
+            $("#scoreText").html(score);
+            setTimeout(function () {
+              $(".open").fadeTo(1000, 0).addClass(`ok`);
+              $(`.open`).removeClass(`open`);
+            }, 1000);
+          }
+
+          if ($(this).hasClass("plus4")) {
+            Swal.fire({
+              icon: "info",
+              title: "太爽了",
+              text: "分數 double 再 double！",
+              timer: "3000",
+              timerProgressBar: true,
+            });
+            score = score * 2 * 2;
+            $("#scoreText").html(score);
+            setTimeout(function () {
+              $(".open").fadeTo(1000, 0).addClass(`ok`);
+              $(`.open`).removeClass(`open`);
+            }, 1000);
+          }
+
+          // 結束翻牌
+          if ($(".ok").length === $(".card").length) {
+            game = false;
+
+            Swal.fire({
+              title: "遊戲結束",
+              backdrop: `
+                  rgba(0,0,123,0.4)
+                  left top
+                  no-repeat
+                `,
+            });
           }
         });
       });
