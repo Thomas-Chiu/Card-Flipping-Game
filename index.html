@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        background-color: mediumaquamarine;
+      }
+
+      #game {
+        width: 1200px;
+        margin: auto;
+      }
+
+      .card {
+        width: 100px;
+        height: 180px;
+        margin: 0 10px;
+        position: relative;
+        transform-style: preserve-3d;
+        /* transform: rotateY(180deg); */
+        transition: transform 0.5s;
+        float: left;
+      }
+
+      .front {
+        width: 100%;
+        height: 100%;
+        background: url(./Cards/1C.jpg) no-repeat center/contain;
+        position: absolute;
+      }
+
+      .back {
+        width: 100%;
+        height: 100%;
+        background: url(./Cards/blue_back.jpg) no-repeat center/contain;
+        position: absolute;
+        transform: rotateY(180deg);
+      }
+
+      .open {
+        transform: rotateY(0deg);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="game">
+      <!-- <div class="card">
+            <div class="front"></div>
+            <div class="back"></div>
+        </div> -->
+    </div>
+
+    <script src="./jquery-3.5.0.min.js"></script>
+    <script src="./sweetalert2.min.js"></script>
+    <script>
+      $(function () {
+        // 放52 張牌
+        for (let i = 0; i < 52; i++) {
+          $(`#game`).append(`
+                <div class="card">
+                    <div class="front"></div>
+                    <div class="back"></div>
+                </div>
+                `);
+        }
+
+        // 插入4*13 個指定卡牌
+        for (let i = 0; i < 4; i++) {
+          for (let j = 0; j < 13; j++) {
+            if (i == 0) {
+              $(`.card`)
+                .eq(j)
+                .addClass(`club${j + 1}`);
+              $(`.card`)
+                .eq(j)
+                .find(`.front`)
+                .css(
+                  `background`,
+                  `url(./Cards/${j + 1}C.jpg) no-repeat center/contain`
+                );
+            }
+            if (i == 1) {
+              $(`.card`)
+                .eq(j + 13)
+                .addClass(`diamond${j + 1}`);
+              $(`.card`)
+                .eq(j + 13)
+                .find(`.front`)
+                .css(
+                  `background`,
+                  `url(./Cards/${j + 1}D.jpg) no-repeat center/contain`
+                );
+            }
+            if (i == 2) {
+              $(`.card`)
+                .eq(j + 26)
+                .addClass(`heart${j + 1}`);
+              $(`.card`)
+                .eq(j + 26)
+                .find(`.front`)
+                .css(
+                  `background`,
+                  `url(./Cards/${j + 1}H.jpg) no-repeat center/contain`
+                );
+            }
+            if (i == 3) {
+              $(`.card`)
+                .eq(j + 39)
+                .addClass(`spade${j + 1}`);
+              $(`.card`)
+                .eq(j + 39)
+                .find(`.front`)
+                .css(
+                  `background`,
+                  `url(./Cards/${j + 1}S.jpg) no-repeat center/contain`
+                );
+            }
+          }
+        }
+
+        // 洗牌
+        // for (let i = 0; i < $(`.card`).length; i++) {
+        //   const refresh = Math.floor(Math.random() * $(`.card`).length);
+        //   console.log(refresh);
+        //   $(`.card`).eq(refresh).insertAfter($(`.card`).eq(i));
+        // }
+
+        // 翻牌
+        $(`.card`).on(`click`, function () {
+          if ($(`.open`).length < 2 && !$(this).hasClass(`open`)) {
+            console.log(this);
+            $(this).addClass(`open`);
+          }
+
+          if ($(`.open`).length == 2) {
+            setTimeout(function () {
+              $(`.open`).removeClass(`open`);
+            }, 1000);
+          }
+
+          // if ($(`.open`).eq(0))
+        });
+      });
+    </script>
+  </body>
+</html>
