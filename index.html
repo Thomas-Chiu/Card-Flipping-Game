@@ -5,19 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
+      html,
       body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: mediumaquamarine;
+        overflow: hidden;
       }
 
       #game {
-        width: 1200px;
-        margin: auto;
+        width: 75%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
       }
 
       .card {
-        width: 100px;
+        width: 12.5%;
         height: 180px;
-        margin: 0 10px;
         position: relative;
         transform-style: preserve-3d;
         /* transform: rotateY(180deg); */
@@ -28,14 +36,13 @@
       .front {
         width: 100%;
         height: 100%;
-        background: url(./Cards/1C.jpg) no-repeat center/contain;
         position: absolute;
       }
 
       .back {
         width: 100%;
         height: 100%;
-        background: url(./Cards/blue_back.jpg) no-repeat center/contain;
+        background: url("./uno-card/back.png") no-repeat center/contain;
         position: absolute;
         transform: rotateY(180deg);
       }
@@ -43,23 +50,46 @@
       .open {
         transform: rotateY(0deg);
       }
+
+      .block {
+        background: url("./uno-card/block.png") no-repeat center/contain;
+      }
+
+      .switch {
+        background: url("./uno-card/switch.png") no-repeat center/contain;
+      }
+
+      .plus2 {
+        background: url("./uno-card/plus2.png") no-repeat center/contain;
+      }
+
+      .plus4 {
+        background: url("./uno-card/plus4.png") no-repeat center/contain;
+      }
     </style>
   </head>
 
   <body>
-    <div id="game">
-      <!-- <div class="card">
-            <div class="front"></div>
-            <div class="back"></div>
-        </div> -->
-    </div>
+    <div id="game"></div>
 
     <script src="./js/jquery-3.5.0.min.js"></script>
     <script src="./js/sweetalert2.min.js"></script>
     <script>
       $(function () {
-        // 放52 張牌
-        for (let i = 0; i < 52; i++) {
+        let game = false;
+        let scoreA = 0;
+        let scoreB = 0;
+
+        // 洗牌function
+        const shuffle = function () {
+          for (let i = 0; i < $(`.card`).length; i++) {
+            const refresh = Math.floor(Math.random() * $(`.card`).length);
+            $(`.card`).eq(refresh).insertAfter($(`.card`).eq(i));
+          }
+        };
+
+        // 放40 張牌
+        for (let i = 0; i < 40; i++) {
           $(`#game`).append(`
                 <div class="card">
                     <div class="front"></div>
@@ -68,66 +98,65 @@
                 `);
         }
 
-        // 插入4*13 個指定卡牌
+        // 插入36 張uno 卡牌
         for (let i = 0; i < 4; i++) {
-          for (let j = 0; j < 13; j++) {
+          for (let j = 0; j < 9; j++) {
             if (i == 0) {
               $(`.card`)
                 .eq(j)
-                .addClass(`club${j + 1}`);
+                .addClass(`B${j + 1}`);
               $(`.card`)
                 .eq(j)
                 .find(`.front`)
                 .css(
                   `background`,
-                  `url(./Cards/${j + 1}C.jpg) no-repeat center/contain`
+                  `url(./uno-card/B${j + 1}.png) no-repeat center/contain`
                 );
             }
             if (i == 1) {
               $(`.card`)
-                .eq(j + 13)
-                .addClass(`diamond${j + 1}`);
+                .eq(j + 9)
+                .addClass(`G${j + 1}`);
               $(`.card`)
-                .eq(j + 13)
+                .eq(j + 9)
                 .find(`.front`)
                 .css(
                   `background`,
-                  `url(./Cards/${j + 1}D.jpg) no-repeat center/contain`
+                  `url(./uno-card/G${j + 1}.png) no-repeat center/contain`
                 );
             }
             if (i == 2) {
               $(`.card`)
-                .eq(j + 26)
-                .addClass(`heart${j + 1}`);
+                .eq(j + 18)
+                .addClass(`R${j + 1}`);
               $(`.card`)
-                .eq(j + 26)
+                .eq(j + 18)
                 .find(`.front`)
                 .css(
                   `background`,
-                  `url(./Cards/${j + 1}H.jpg) no-repeat center/contain`
+                  `url(./uno-card/R${j + 1}.png) no-repeat center/contain`
                 );
             }
             if (i == 3) {
               $(`.card`)
-                .eq(j + 39)
-                .addClass(`spade${j + 1}`);
+                .eq(j + 27)
+                .addClass(`Y${j + 1}`);
               $(`.card`)
-                .eq(j + 39)
+                .eq(j + 27)
                 .find(`.front`)
                 .css(
                   `background`,
-                  `url(./Cards/${j + 1}S.jpg) no-repeat center/contain`
+                  `url(./uno-card/Y${j + 1}.png) no-repeat center/contain`
                 );
             }
           }
         }
 
-        // 洗牌
-        // for (let i = 0; i < $(`.card`).length; i++) {
-        //   const refresh = Math.floor(Math.random() * $(`.card`).length);
-        //   console.log(refresh);
-        //   $(`.card`).eq(refresh).insertAfter($(`.card`).eq(i));
-        // }
+        // 插入4 張效果牌
+        $(".card").eq(36).addClass("block");
+        $(".card").eq(37).addClass("switch");
+        $(".card").eq(38).addClass("plus2");
+        $(".card").eq(39).addClass("plus4");
 
         // 翻牌
         $(`.card`).on(`click`, function () {
@@ -139,6 +168,18 @@
           if ($(`.open`).length == 2) {
             setTimeout(function () {
               $(`.open`).removeClass(`open`);
+              Swal.fire({
+                title: "A x B = ",
+                input: "text",
+                inputValue: "",
+                showCancelButton: false,
+                inputValidator: (value) => {
+                  if (!value) {
+                    return "You need to write something!";
+                  }
+                },
+              });
+              shuffle();
             }, 1000);
           }
 
