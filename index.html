@@ -36,11 +36,11 @@
         // 放40 張牌
         for (let i = 0; i < 40; i++) {
           $(`#game`).append(`
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-                `);
+                      <div class="card">
+                          <div class="front"></div>
+                          <div class="back"></div>
+                      </div>
+                      `);
         }
 
         // 插入36 張uno 卡牌
@@ -104,7 +104,15 @@
         $(".card").eq(39).addClass("plus4");
 
         // 洗牌
-        // shuffle();
+        shuffle();
+
+        // 遊戲說明
+        Swal.fire({
+          width: 800,
+          title: "UNO FLIP!",
+          text: "翻到相同號碼的牌 + 5 分，小心上面的效果牌喔",
+          imageUrl: "./uno-card/rules.png",
+        });
 
         // 開始翻牌
         $(`.card`).on(`click`, function () {
@@ -196,17 +204,36 @@
           }
 
           // 結束翻牌 ( -1 是因為不用等到下一次點擊觸發)
-          if ($(".ok").length === $(".card").length - 1) {
-            game = false;
-
+          if ($(".ok").length >= $(".card").length - 1) {
             Swal.fire({
               title: "遊戲結束",
-              backdrop: `
-                  rgba(0,0,123,0.4)
-                  left top
-                  no-repeat
-                `,
+              text: `你得到 ${score} 分`,
+              imageUrl: "https://picsum.photos/400/200/?random=1",
+              imageWidth: 400,
+              imageHeight: 200,
             });
+            game = false;
+            setTimeout(function () {
+              location.reload();
+            }, 5000);
+          } else if (
+            $(".ok").length >= 36 &&
+            !$(".ok").hasClass("block") &&
+            !$(".ok").hasClass("switch") &&
+            !$(".ok").hasClass("plus2") &&
+            !$(".ok").hasClass("plus4")
+          ) {
+            Swal.fire({
+              title: "遊戲結束",
+              text: `今日分數: ${score} 分`,
+              imageUrl: "https://picsum.photos/400/200/?random=1",
+              imageWidth: 400,
+              imageHeight: 200,
+            });
+            game = false;
+            setTimeout(function () {
+              location.reload();
+            }, 5000);
           }
         });
       });
