@@ -1,0 +1,81 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: mediumaquamarine;
+}
+
+#game {
+  width: 75%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  overflow-x: hidden;
+  margin-right: auto;
+}
+
+#score {
+  height: 100vmin;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 2rem auto 0 0;
+  font-size: 3rem;
+  font-family: "Marko One", serif;
+  position: relative;
+}
+
+#scoreText {
+  position: absolute;
+  font-size: 7.5rem;
+  top: calc(50% - 7.5rem);
+  text-shadow: 5px 5px 2px #fff;
+}
+
+.card {
+  width: 12.5%;
+  height: 180px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition: transform 0.5s;
+  float: left;
+}
+
+.front {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.back {
+  width: 100%;
+  height: 100%;
+  background: url("../uno-card/back.png") no-repeat center/contain;
+  position: absolute;
+  transform: rotateY(180deg);
+}
+
+.open {
+  transform: rotateY(0deg);
+}
+
+.block {
+  background: url("../uno-card/block.png") no-repeat center/contain;
+}
+
+.switch {
+  background: url("../uno-card/switch.png") no-repeat center/contain;
+}
+
+.plus2 {
+  background: url("../uno-card/plus2.png") no-repeat center/contain;
+}
+
+.plus4 {
+  background: url("../uno-card/plus4.png") no-repeat center/contain;
+}
